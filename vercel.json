@@ -1,4 +1,5 @@
 {
+  "version": 2,
   "functions": {
     "api/sequential-thinking.js": {
       "maxDuration": 30
@@ -7,15 +8,15 @@
   "rewrites": [
     {
       "source": "/health",
-      "destination": "/api/sequential-thinking?path=/api/health"
+      "destination": "/api/sequential-thinking"
     },
     {
       "source": "/tools/list",
-      "destination": "/api/sequential-thinking?path=/api/tools/list"
+      "destination": "/api/sequential-thinking"
     },
     {
       "source": "/tools/call",
-      "destination": "/api/sequential-thinking?path=/api/tools/call"
+      "destination": "/api/sequential-thinking"
     }
   ]
 }

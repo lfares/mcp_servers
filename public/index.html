@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sequential Thinking MCP Server</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 40px; 
+            background: #f5f5f5; 
+            color: #333;
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 30px; 
+            border-radius: 10px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+        }
+        h1 { 
+            color: #2c3e50; 
+            text-align: center; 
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+        button { 
+            padding: 12px 24px; 
+            margin: 10px; 
+            background: #3498db; 
+            color: white; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-size: 16px; 
+        }
+        button:hover { 
+            background: #2980b9; 
+        }
+        pre { 
+            background: #ecf0f1; 
+            padding: 15px; 
+            border-radius: 5px; 
+            overflow-x: auto; 
+            margin: 10px 0; 
+        }
+        .status { 
+            padding: 10px; 
+            margin: 10px 0; 
+            border-radius: 5px; 
+        }
+        .success { 
+            background: #d5f4e6; 
+            color: #27ae60; 
+        }
+        .error { 
+            background: #fadbd8; 
+            color: #e74c3c; 
+        }
+        .endpoint {
+            background: #e8f4fd;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧠 Sequential Thinking MCP Server</h1>
+        <p class="subtitle">A Vercel-deployed MCP server for structured problem-solving</p>
+        
+        <h2>Available Endpoints</h2>
+        <div class="endpoint">GET /health - Health check</div>
+        <div class="endpoint">POST /tools/list - List available tools</div>
+        <div class="endpoint">POST /tools/call - Call the sequential thinking tool</div>
+        
+        <h2>Test the Server</h2>
+        <button onclick="checkHealth()">Check Health</button>
+        <div id="healthStatus"></div>
+        
+        <button onclick="listTools()">List Tools</button>
+        <div id="toolsStatus"></div>
+        
+        <button onclick="testThinking()">Test Sequential Thinking</button>
+        <div id="testStatus"></div>
+    </div>
+
+    <script>
+        async function checkHealth() {
+            try {
+                const response = await fetch('/health');
+                const data = await response.json();
+                document.getElementById('healthStatus').innerHTML = 
+                    '<div class="status success"><pre>' + JSON.stringify(data, null, 2) + '</pre></div>';
+            } catch (error) {
+                document.getElementById('healthStatus').innerHTML = 
+                    '<div class="status error">Error: ' + error.message + '</div>';
+            }
+        }
+
+        async function listTools() {
+            try {
+                const response = await fetch('/tools/list', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: 1, method: 'tools/list' })
+                });
+                const data = await response.json();
+                document.getElementById('toolsStatus').innerHTML = 
+                    '<div class="status success"><pre>' + JSON.stringify(data, null, 2) + '</pre></div>';
+            } catch (error) {
+                document.getElementById('toolsStatus').innerHTML = 
+                    '<div class="status error">Error: ' + error.message + '</div>';
+            }
+        }
+
+        async function testThinking() {
+            try {
+                const testRequest = {
+                    jsonrpc: "2.0",
+                    id: 1,
+                    method: "tools/call",
+                    params: {
+                        name: "sequentialthinking",
+                        arguments: {
+                            thought: "Let me think about this problem step by step. First, I need to understand what we're trying to solve.",
+                            nextThoughtNeeded: true,
+                            thoughtNumber: 1,
+                            totalThoughts: 3
+                        }
+                    }
+                };
+                
+                const response = await fetch('/tools/call', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(testRequest)
+                });
+                const data = await response.json();
+                document.getElementById('testStatus').innerHTML = 
+                    '<div class="status success"><pre>' + JSON.stringify(data, null, 2) + '</pre></div>';
+            } catch (error) {
+                document.getElementById('testStatus').innerHTML = 
+                    '<div class="status error">Error: ' + error.message + '</div>';
+            }
+        }
+    </script>
+</body>
+</html>
