@@ -1,0 +1,21 @@
+{
+  "functions": {
+    "api/sequential-thinking.js": {
+      "maxDuration": 30
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/health",
+      "destination": "/api/sequential-thinking?path=/api/health"
+    },
+    {
+      "source": "/tools/list",
+      "destination": "/api/sequential-thinking?path=/api/tools/list"
+    },
+    {
+      "source": "/tools/call",
+      "destination": "/api/sequential-thinking?path=/api/tools/call"
+    }
+  ]
+}
