@@ -11,6 +11,10 @@
       "destination": "/api/sequential-thinking"
     },
     {
+      "source": "/mcp",
+      "destination": "/api/sequential-thinking"
+    },
+    {
       "source": "/tools/list",
       "destination": "/api/sequential-thinking"
     },

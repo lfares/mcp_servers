@@ -48,6 +48,76 @@ export default function handler(req, res) {
     return;
   }
 
+  // MCP endpoint for Claude Code
+  if (req.url.includes('/mcp') && req.method === 'POST') {
+    try {
+      const request = req.body;
+      
+      if (request.method === 'tools/list') {
+        const tools = [{
+          name: "sequentialthinking",
+          description: "A tool for dynamic and reflective problem-solving through thoughts. Helps analyze problems through a flexible thinking process that can adapt and evolve.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              thought: { type: "string", description: "Your current thinking step" },
+              nextThoughtNeeded: { type: "boolean", description: "Whether another thought step is needed" },
+              thoughtNumber: { type: "integer", description: "Current thought number", minimum: 1 },
+              totalThoughts: { type: "integer", description: "Estimated total thoughts needed", minimum: 1 }
+            },
+            required: ["thought", "nextThoughtNeeded", "thoughtNumber", "totalThoughts"]
+          }
+        }];
+
+        res.status(200).json({
+          jsonrpc: "2.0",
+          id: request.id,
+          result: { tools }
+        });
+        return;
+      }
+
+      if (request.method === 'tools/call') {
+        if (request.params && request.params.name === 'sequentialthinking') {
+          const { thought, thoughtNumber, totalThoughts, nextThoughtNeeded } = request.params.arguments;
+          const result = thinkingServer.processThought(thought, thoughtNumber, totalThoughts, nextThoughtNeeded);
+          
+          res.status(200).json({
+            jsonrpc: "2.0",
+            id: request.id,
+            result: {
+              content: [{
+                type: "text",
+                text: JSON.stringify(result, null, 2)
+              }]
+            }
+          });
+        } else {
+          res.status(400).json({
+            jsonrpc: "2.0",
+            id: request.id,
+            error: { code: -32601, message: "Unknown tool" }
+          });
+        }
+        return;
+      }
+
+      // Default MCP response
+      res.status(200).json({
+        jsonrpc: "2.0",
+        id: request.id,
+        result: { message: "MCP server is running" }
+      });
+    } catch (error) {
+      res.status(500).json({
+        jsonrpc: "2.0",
+        id: null,
+        error: { code: -32000, message: error.message }
+      });
+    }
+    return;
+  }
+
   if (req.url.includes('/tools/list') && req.method === 'POST') {
     const tools = [{
       name: "sequentialthinking",
